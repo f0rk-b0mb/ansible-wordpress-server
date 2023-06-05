@@ -17,7 +17,7 @@ This repository contains an Ansible playbook that automates the setup of a WordP
 To get started, clone this repository to your local machine:
 
 BASH:
-git clone https://github.com/
+git clone https://github.com/f0rk-b0mb/ansible-wordpress-server
 
 
 Replace `your-username` and `your-repo-name` with your actual GitHub username and repository name.
@@ -74,7 +74,7 @@ Dieses Repository enthält ein Ansible Playbook, das die Einrichtung eines WordP
 Um zu beginnen, klonen Sie dieses Repository auf Ihren lokalen Rechner:
 
 BASH:
-git clone https://github.com/your-username/your-repo-name.git
+git clone https://github.com/f0rk-b0mb/ansible-wordpress-server
 
 
 Ersetzen Sie `your-username` und `your-repo-name` durch Ihren tatsächlichen GitHub-Benutzernamen und den Namen des Repositorys.
