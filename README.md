@@ -53,3 +53,59 @@ Contributions are welcome! If you have a feature request, bug report, or suggest
 
 This project is licensed under the MIT License. See the `LICENSE` file in the repository for more information.
 
+###################################### GERMAN VERSION - DEUTSCHE VERSION ######################################
+
+# WordPress Server Setup
+
+## Einführung
+
+Dieses Repository enthält ein Ansible Playbook, das die Einrichtung eines WordPress-Servers automatisiert. Es installiert und konfiguriert die notwendigen Softwarepakete, richtet eine MySQL-Datenbank für WordPress ein, lädt WordPress herunter und richtet es ein, konfiguriert Nginx und erhält ein SSL-Zertifikat für Ihre Website und fügt eine `.bashrc`-Datei zum Home-Verzeichnis des angegebenen Benutzers hinzu.
+
+## Voraussetzungen
+
+1. [Ansible](https://www.ansible.com/) auf Ihrem lokalen Rechner installiert.
+2. SSH-Zugriff auf den Server, den Sie einrichten möchten. Der Server sollte Ubuntu laufen haben.
+3. Grundkenntnisse in SSH und Befehlszeilen-Interface.
+
+## Nutzung
+
+### Repository klonen
+
+Um zu beginnen, klonen Sie dieses Repository auf Ihren lokalen Rechner:
+
+BASH:
+git clone https://github.com/your-username/your-repo-name.git
+
+
+Ersetzen Sie `your-username` und `your-repo-name` durch Ihren tatsächlichen GitHub-Benutzernamen und den Namen des Repositorys.
+
+### Das Playbook anpassen
+
+Bevor Sie das Playbook ausführen, müssen Sie es so anpassen, dass es Ihren tatsächlichen Servernamen, Domain, E-Mail und MySQL root Passwort enthält. Diese Werte sind durch Platzhalter im Playbook dargestellt:
+
+- `your_server`: Ersetzen Sie dies durch die IP-Adresse oder den Hostnamen Ihres Servers.
+- `your_domain`: Ersetzen Sie dies durch den Domain-Namen, den Sie für Ihre WordPress-Site verwenden möchten.
+- `your_email`: Ersetzen Sie dies durch Ihre E-Mail-Adresse. Diese wird von Let's Encrypt für den Versand von E-Mails in Bezug auf Ihr SSL-Zertifikat verwendet.
+- `your_mysql_root_password`: Ersetzen Sie dies durch das gewünschte MySQL root Passwort.
+
+Aus Sicherheitsgründen sollten Sie in Betracht ziehen, [Ansible Vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html) zu verwenden, um sensible Daten wie Passwörter sicher zu speichern.
+
+### Das Playbook ausführen
+
+Navigieren Sie zu dem Verzeichnis, das das Playbook enthält, und führen Sie den folgenden Befehl aus:
+
+BASH:
+ansible-playbook main.yml
+
+
+Möglicherweise werden Sie nach dem SSH-Passwort für Ihren Server gefragt. Nach Eingabe des Passworts beginnt Ansible mit der Ausführung der Aufgaben im Playbook.
+
+Sobald das Playbook fertig ausgeführt ist, sollten Sie eine funktionierende WordPress-Site haben, die unter der von Ihnen angegebenen Domain zugänglich ist.
+
+## Mitwirken
+
+Beiträge sind willkommen! Wenn Sie einen Feature-Request, einen Fehlerbericht oder einen Vorschlag haben, können Sie gerne ein Issue auf GitHub öffnen. Wenn Sie Code beitragen möchten, können Sie das Repository forken und einen Pull-Request einreichen.
+
+## Lizenz
+
+Dieses Projekt ist unter der MIT-Lizenz lizenziert. Weitere Informationen finden Sie in der Datei `LICENSE` im Repository.
