@@ -6,3 +6,4 @@ wordpress_db: wordpress
 wordpress_user: wordpress_user
 wordpress_password: wordpress_password
 email: your_email
+mariadb_socket: /run/mysqld/mysqld.sock

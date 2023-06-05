@@ -1,0 +1,185 @@
+---
+- name: Setup WordPress Server
+  hosts: all
+  remote_user: "root"
+  vars:
+    ansible_password: "changeme"
+    ansible_become_password: "changeme"
+  become: yes
+
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - name: Update and upgrade system
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install packages
+      apt:
+        name:
+          - nginx
+          - mariadb-server
+          - php-fpm
+          - php-mysql
+          - php-curl
+          - php-gd
+          - php-intl
+          - php-mbstring
+          - php-soap
+          - php-xml
+          - php-xmlrpc
+          - php-zip
+          - unzip
+          - python3-certbot-nginx
+          - rkhunter
+          - fail2ban
+          - python3-pymysql
+          - python3-minimal
+          - certbot
+        state: present
+
+    - name: Configure rkhunter
+      lineinfile:
+        path: /etc/rkhunter.conf
+        regexp: '^WEB_CMD'
+        line: 'WEB_CMD=/bin/true'
+
+    - name: Update rkhunter database
+      command: rkhunter --update
+      changed_when: false
+      ignore_errors: true
+
+    - name: Setup daily job for rkhunter
+      cron:
+        name: rkhunter
+        minute: 0
+        hour: 3
+        job: "/usr/bin/rkhunter --cronjob --update --quiet"
+        user: root
+        state: present
+
+    - name: Allow Nginx Full and SSH through UFW
+      ufw:
+        rule: allow
+        to_port: "80"
+        proto: tcp
+
+    - name: Allow HTTPS through UFW
+      ufw:
+        rule: allow
+        to_port: "443"
+        proto: tcp
+
+    - name: Allow SSH through UFW
+      ufw:
+        rule: allow
+        to_port: "{{ ssh_port }}"
+        proto: tcp
+
+    - name: Change SSH port
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regex: '^#Port 22'
+        line: 'Port {{ ssh_port }}'
+
+    - name: Start and enable services
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - nginx
+        - mariadb
+        - fail2ban
+
+    - name: Check if the specified root password is already set
+      shell: 'systemctl set-environment MYSQLD_OPTS="--skip-networking --skip-grant-tables"'
+
+    - name: Check if the specified root password is already set
+      shell: "service mariadb restart"
+
+    - name: Create temporary shell script
+      tempfile:
+        suffix: .sh
+      register: script_file
+
+    - name: Write MySQL commands to shell script
+      copy:
+        content: |
+          #!/bin/bash
+          mysql -u root <<EOF
+          flush privileges;
+          USE mysql;
+          ALTER USER 'root'@'localhost' IDENTIFIED BY '{{ mysql_root_password }}';
+          quit
+          EOF
+        dest: "{{ script_file.path }}"
+        mode: '0755'
+
+    - name: Execute shell script
+      command: "{{ script_file.path }}"
+      register: script_result
+      changed_when: false
+
+    - name: Display script output
+      debug:
+        var: script_result.stdout_lines
+
+    - name: Create WordPress database
+      mysql_db:
+        name: "{{ wordpress_db }}"
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+        login_unix_socket: "{{ mariadb_socket }}"
+        state: present
+
+    - name: Create WordPress user
+      mysql_user:
+        name: "{{ wordpress_user }}"
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
+        login_unix_socket: "{{ mariadb_socket }}"
+        password: "{{ wordpress_password }}"
+        priv: "{{ wordpress_db }}.*:ALL"
+        host: localhost
+        state: present
+
+    - name: Fetch and extract WordPress
+      unarchive:
+        src: https://wordpress.org/latest.tar.gz
+        dest: /var/www/html
+        remote_src: yes
+        creates: /var/www/html/wordpress
+
+    - name: Update WP config file
+      template:
+        src: wp-config.php.j2
+        dest: /var/www/html/wordpress/wp-config.php
+
+    - name: Register certbot
+      shell: |
+        certbot -n register --agree-tos --email {{ email }}
+        touch /etc/letsencrypt/.registered
+
+    - name: Obtain SSL certificate using Certbot
+      command: "certbot --nginx certonly -d {{ domain }} --non-interactive --agree-tos"
+
+    - name: Update nginx config file
+      template:
+        src: default.j2
+        dest: /etc/nginx/sites-available/default
+
+    - name: Restart nginx
+      systemd:
+        name: nginx
+        state: restarted
+
+    - name: Add bashrc
+      copy:
+        src: bashrc
+        dest: /root/.bashrc
+        owner: root
+        group: root
+        mode: '0644'
