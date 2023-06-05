@@ -53,7 +53,7 @@ Contributions are welcome! If you have a feature request, bug report, or suggest
 
 This project is licensed under the MIT License. See the `LICENSE` file in the repository for more information.
 
-############################## GERMAN VERSION - DEUTSCHE VERSION ##############################
+###################### GERMAN VERSION - DEUTSCHE VERSION ######################
 
 # WordPress Server Setup
 
