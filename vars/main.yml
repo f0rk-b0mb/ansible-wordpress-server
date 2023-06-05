@@ -1,0 +1,8 @@
+---
+domain: your_domain
+ssh_port: 2222
+mysql_root_password: your_mysql_root_password
+wordpress_db: wordpress
+wordpress_user: wordpress_user
+wordpress_password: wordpress_password
+email: your_email
