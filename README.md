@@ -20,8 +20,6 @@ BASH:
 git clone https://github.com/f0rk-b0mb/ansible-wordpress-server
 
 
-Replace `your-username` and `your-repo-name` with your actual GitHub username and repository name.
-
 ### Modify the Playbook
 
 Before running the playbook, you need to modify it to include your actual server name, domain, email, and MySQL root password. These values are represented by placeholders in the playbook:
@@ -76,8 +74,6 @@ Um zu beginnen, klonen Sie dieses Repository auf Ihren lokalen Rechner:
 BASH:
 git clone https://github.com/f0rk-b0mb/ansible-wordpress-server
 
-
-Ersetzen Sie `your-username` und `your-repo-name` durch Ihren tatsächlichen GitHub-Benutzernamen und den Namen des Repositorys.
 
 ### Das Playbook anpassen
 
